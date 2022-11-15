@@ -55,7 +55,9 @@ class LinkIndexer {
 		)
 		plugin.registerEvent(
 			plugin.app.metadataCache.on('changed', (file, data, cache) => {
-				this.updateTags(file.path, cache.tags?.map((tag) => tag.tag) ?? []);
+				const updatedTags = cache.tags?.map((tag) => tag.tag) ?? [];
+				updatedTags.push(...(cache.frontmatter?.tags ?? []));
+				this.updateTags(file.path, updatedTags);
 			}
 		))
 	}

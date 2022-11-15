@@ -81,9 +81,12 @@ export default class DanpungPlugin extends Plugin {
 				}
 				this.linkIndexer.updateStore(file.path, getLinks(content, file.path, mode));
 
-				const tags = this.app.metadataCache.getCache(file.path)?.tags;
+				const tags = (this.app.metadataCache.getCache(file.path)?.tags ?? []).filter((tag) => tag.tag ).map((tag) => tag.tag);
+				const fmTags = this.app.metadataCache.getCache(file.path)?.frontmatter?.tags ?? [];
+				tags.push(...fmTags);
+
 				if (tags) {
-					this.linkIndexer.updateTags(file.path, tags.map((tag) => tag.tag));
+					this.linkIndexer.updateTags(file.path, tags);
 				}
 			});
 		});
