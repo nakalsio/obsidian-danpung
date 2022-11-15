@@ -2,7 +2,7 @@ import { Plugin, TFile } from "obsidian";
 import DanpungPlugin from "./main";
 
 export {
-	LinkIndexer, Link, getLinks
+	LinkIndexer, Link, LinkType, getLinks
 }
 
 enum LinkType {
@@ -13,7 +13,7 @@ enum LinkType {
 
 class Link {
 	constructor(
-		public Text: string, 
+		public Text: string,
 		public Path: string,
 		public FilePath: string,
 		public Tags: string[] = []) { }
@@ -21,9 +21,9 @@ class Link {
 
 class LinkIndexer {
 
-	linkStore: Link[] = [];
-
-	constructor(public plugin: DanpungPlugin) {
+	constructor(
+		public plugin: DanpungPlugin, 
+		public linkStore: Link[] = []) {
 		plugin.registerEvent(
 			plugin.app.vault.on('modify', (file) => {
 				// Read the file and update the link indices
@@ -63,7 +63,11 @@ class LinkIndexer {
 	updateStore = (filepath: string, links: Link[]) => {
 		this.linkStore = this.linkStore.filter((link) => link.FilePath !== filepath)
 		this.linkStore.push(...links);
-		// console.log(this.linkStore);
+
+		// Update settings.linkStore
+		this.plugin.settings.linkStore = this.linkStore;
+		// Update status bar
+		this.plugin.statusBarItemEl?.setText(`External Links: ${this.linkStore.length}`);
 	}
 
 	updateTags = (filepath: string, tags: string[]) => {
@@ -73,7 +77,9 @@ class LinkIndexer {
 			}
 			return link;
 		})
-		// console.log(this.linkStore);
+
+		// Update settings.linkStore
+		this.plugin.settings.linkStore = this.linkStore;
 	}
 }
 
