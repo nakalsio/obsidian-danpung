@@ -6,3 +6,16 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+
+.link_suggestion_title {
+    font-weight: bold;
+}
+
+.link_suggestion_filepath {
+    color: gray;
+}
+
+.link_suggestion_tag {
+    color: blueviolet;
+    padding-right: 5px;
+}
