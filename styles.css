@@ -19,3 +19,63 @@ If your plugin does not need CSS, delete this file.
     color: blueviolet;
     padding-right: 5px;
 }
+
+.ext_link_viewer_search {
+	width: 100%;
+	margin-bottom: 5px;
+	margin-top: 5px;
+	box-sizing: border-box;
+}
+
+.ext_link_viewer_result_comment {
+	margin: 5px;
+}
+
+.ext_link_viewer_results {
+	padding: 0;
+}
+
+.ext_link_viewer_item {
+	list-style: none;
+	padding: 5px;
+	border-top: 1px solid #555;
+	border-left: 1px solid #555;
+	border-radius: 5px;
+	margin-bottom: 5px;
+}
+
+.ext_link_viewer_item_title {
+	font-weight: bold;
+}
+
+.ext_link_viewer_item_path {
+	color: gray;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.ext_link_viewer_item_filepath {
+	color: gray;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.ext_link_viewer_item_tags {
+	color: blueviolet;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.ext_link_viewer_item_tag {
+	margin-right: 5px;
+	padding: 2px;
+	border-radius: 10px;
+}
+
+.ext_link_viewer_item_tag:hover {
+	cursor: pointer;
+	color: fuchsia;
+}

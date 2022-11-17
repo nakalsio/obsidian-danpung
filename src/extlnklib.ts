@@ -22,7 +22,7 @@ class Link {
 class LinkIndexer {
 
 	constructor(
-		public plugin: DanpungPlugin, 
+		public plugin: DanpungPlugin,
 		public linkStore: Link[] = []) {
 		plugin.registerEvent(
 			plugin.app.vault.on('modify', (file) => {
@@ -45,13 +45,13 @@ class LinkIndexer {
 					}
 					this.updateStore(oldPath, getLinks(content, file.path, mode));
 				})
-			} )
+			})
 		)
 		plugin.registerEvent(
 			plugin.app.vault.on('delete', (file) => {
 				console.log('File deleted: ' + file.path);
 				this.updateStore(file.path, []);
-			} )
+			})
 		)
 		plugin.registerEvent(
 			plugin.app.metadataCache.on('changed', (file, data, cache) => {
@@ -59,7 +59,7 @@ class LinkIndexer {
 				updatedTags.push(...(cache.frontmatter?.tags ?? []));
 				this.updateTags(file.path, updatedTags);
 			}
-		))
+			))
 	}
 
 	updateStore = (filepath: string, links: Link[]) => {

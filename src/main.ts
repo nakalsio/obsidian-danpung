@@ -1,5 +1,7 @@
-import { App, Notice, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
-import { LinkIndexer, Link, LinkType, getLinks } from './extlnklib';
+import { App, MarkdownView, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
+import { ExternalLinkViewer, VIEW_TYPE_EXTERNAL_LINK_VIEWER } from './view';
+import { Link, LinkIndexer, LinkType, getLinks } from './extlnklib';
+
 import { LinkSuggestionModal } from './suggestion';
 
 // Remember to rename these classes and interfaces!
@@ -32,10 +34,15 @@ export default class DanpungPlugin extends Plugin {
 			this.saveSettings();
 		});
 
+		this.registerView(
+			VIEW_TYPE_EXTERNAL_LINK_VIEWER,
+			(leaf) => new ExternalLinkViewer(leaf, this)
+		);
+
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('leaf', 'Open Danpung Dashboard', (evt: MouseEvent) => {
 			// Called when the user clicks the icon.
-			new Notice('You clicked me!!!');
+			this.activateView();
 		});
 		// Perform additional things with the ribbon
 		ribbonIconEl.addClass('my-plugin-ribbon-class');
@@ -51,6 +58,14 @@ export default class DanpungPlugin extends Plugin {
 			hotkeys: [{ modifiers: ["Shift", "Alt"], key: ";" }],
 			callback: () => {
 				new LinkSuggestionModal(this).open();
+			}
+		});
+		this.addCommand({
+			id: 'open-ext-link-viewer',
+			name: 'Open external link viewer',
+			hotkeys: [{ modifiers: ["Shift", "Alt"], key: "'" }],
+			callback: () => {
+				this.activateView();
 			}
 		});
 
@@ -81,7 +96,7 @@ export default class DanpungPlugin extends Plugin {
 				}
 				this.linkIndexer.updateStore(file.path, getLinks(content, file.path, mode));
 
-				const tags = (this.app.metadataCache.getCache(file.path)?.tags ?? []).filter((tag) => tag.tag ).map((tag) => tag.tag);
+				const tags = (this.app.metadataCache.getCache(file.path)?.tags ?? []).filter((tag) => tag.tag).map((tag) => tag.tag);
 				const fmTags = this.app.metadataCache.getCache(file.path)?.frontmatter?.tags ?? [];
 				tags.push(...fmTags);
 
@@ -90,6 +105,19 @@ export default class DanpungPlugin extends Plugin {
 				}
 			});
 		});
+	}
+
+	async activateView() {
+		this.app.workspace.detachLeavesOfType(VIEW_TYPE_EXTERNAL_LINK_VIEWER);
+
+		await this.app.workspace.getRightLeaf(false).setViewState({
+			type: VIEW_TYPE_EXTERNAL_LINK_VIEWER,
+			active: true,
+		});
+
+		this.app.workspace.revealLeaf(
+			this.app.workspace.getLeavesOfType(VIEW_TYPE_EXTERNAL_LINK_VIEWER)[0]
+		);
 	}
 }
 
