@@ -3,6 +3,7 @@ import { MarkdownView, SuggestModal } from "obsidian";
 import DanpungPlugin from "./main";
 import { Link } from "./extlnklib";
 import { search } from './fuzzy';
+import { getFuzzySearchKeys } from './settings';
 
 const defaultSort = (a: Link, b: Link) => {
 	return a.Text.localeCompare(b.Text);
@@ -14,7 +15,7 @@ export class LinkSuggestionModal extends SuggestModal<Link> {
 		if (query == '') {
 			return this.plugin.linkIndexer.linkStore.sort(defaultSort);
 		}
-		return search(this.plugin.linkIndexer.linkStore, query);
+		return search(this.plugin.linkIndexer.linkStore, query, getFuzzySearchKeys(this.plugin.settings));
 	}
 	renderSuggestion(value: Link, el: HTMLElement) {
 		const titleEl = el.createEl("div");

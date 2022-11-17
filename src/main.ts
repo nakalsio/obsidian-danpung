@@ -1,20 +1,9 @@
-import { App, MarkdownView, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
+import { Plugin } from 'obsidian';
 import { ExternalLinkViewer, VIEW_TYPE_EXTERNAL_LINK_VIEWER } from './view';
-import { Link, LinkIndexer, LinkType, getLinks } from './extlnklib';
+import { LinkIndexer, LinkType, getLinks } from './extlnklib';
+import { DanpungPluginSettingTab, DanpungPluginSettings, DEFAULT_SETTINGS } from './settings';
 
 import { LinkSuggestionModal } from './suggestion';
-
-// Remember to rename these classes and interfaces!
-
-interface DanpungPluginSettings {
-	onlyFullLink: boolean;
-	linkStore: Link[];
-}
-
-const DEFAULT_SETTINGS: DanpungPluginSettings = {
-	onlyFullLink: true,
-	linkStore: [],
-}
 
 export default class DanpungPlugin extends Plugin {
 
@@ -118,33 +107,5 @@ export default class DanpungPlugin extends Plugin {
 		this.app.workspace.revealLeaf(
 			this.app.workspace.getLeavesOfType(VIEW_TYPE_EXTERNAL_LINK_VIEWER)[0]
 		);
-	}
-}
-
-class DanpungPluginSettingTab extends PluginSettingTab {
-	plugin: DanpungPlugin;
-
-	constructor(app: App, plugin: DanpungPlugin) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
-
-	display(): void {
-		const { containerEl } = this;
-
-		containerEl.empty();
-
-		containerEl.createEl('h2', { text: 'Settings for indexing links.' });
-
-		new Setting(containerEl)
-			.setName('Only Full Links')
-			.setDesc('Only show full links starting with http(s) will be collected.')
-			.addToggle((toggle) => toggle
-				.setValue(this.plugin.settings.onlyFullLink)
-				.onChange(async (value) => {
-					console.log('Only Full Links Toggled: ' + value);
-					this.plugin.settings.onlyFullLink = value;
-					await this.plugin.saveSettings();
-				}));
 	}
 }

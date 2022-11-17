@@ -1,0 +1,113 @@
+import { PluginSettingTab, App, Setting } from "obsidian";
+import DanpungPlugin from "./main";
+import { Link } from "./extlnklib";
+
+export interface DanpungPluginSettings {
+	onlyFullLink: boolean;
+	fuzzySearchTitle: boolean;
+	fuzzySearchFilePath: boolean;
+	fuzzySearchPath: boolean;
+	fuzzySearchTags: boolean;
+	linkStore: Link[];
+}
+
+export const DEFAULT_SETTINGS: DanpungPluginSettings = {
+	onlyFullLink: true,
+	fuzzySearchTitle: true,
+	fuzzySearchFilePath: false,
+	fuzzySearchPath: false,
+	fuzzySearchTags: false,
+	linkStore: [],
+}
+
+export const getFuzzySearchKeys = (settings: DanpungPluginSettings, mustHaveKeys: string[] = []): string[] => {
+	const keys: string[] = ['Text'];
+	if (settings.fuzzySearchFilePath) {
+		keys.push('FilePath');
+	}
+	if (settings.fuzzySearchPath) {
+		keys.push('Path');
+	}
+	if (settings.fuzzySearchTags) {
+		keys.push('Tags');
+	}
+
+	mustHaveKeys.forEach((key) => {
+		if (!keys.includes(key)) {
+			keys.push(key);
+		}
+	});
+
+	return keys;
+}
+
+export class DanpungPluginSettingTab extends PluginSettingTab {
+	plugin: DanpungPlugin;
+
+	constructor(app: App, plugin: DanpungPlugin) {
+		super(app, plugin);
+		this.plugin = plugin;
+	}
+
+	display(): void {
+		const { containerEl } = this;
+
+		containerEl.empty();
+
+		containerEl.createEl('h2', { text: 'Settings for indexing links.' });
+
+		new Setting(containerEl)
+			.setName('Only Full Links')
+			.setDesc('Only show full links starting with http(s) will be collected.')
+			.addToggle((toggle) => toggle
+				.setValue(this.plugin.settings.onlyFullLink)
+				.onChange(async (value) => {
+					this.plugin.settings.onlyFullLink = value;
+					await this.plugin.saveSettings();
+				}));
+
+		containerEl.createEl('h2', { text: 'Additonal options for the fuzzy search.' });
+		containerEl.createEl('p', { text: 'The fuzzy search always matches the title of the external link.' });
+
+		// new Setting(containerEl)
+		// 	.setName('Title Match')
+		// 	.setDesc('Match the title of the link.')
+		// 	.addToggle((toggle) => toggle
+		// 		.setValue(this.plugin.settings.fuzzySearchTitle)
+		// 		.onChange(async (value) => {
+		// 			this.plugin.settings.fuzzySearchTitle = value;
+		// 			await this.plugin.saveSettings();
+		// 		}));
+
+		new Setting(containerEl)
+			.setName('URL Match')
+			.setDesc('Match the URL of the link.')
+			.addToggle((toggle) => toggle
+				.setValue(this.plugin.settings.fuzzySearchPath)
+				.onChange(async (value) => {
+					this.plugin.settings.fuzzySearchPath = value;
+					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName('FilePath Match')
+			.setDesc('Match the FilePath of the note.')
+			.addToggle((toggle) => toggle
+				.setValue(this.plugin.settings.fuzzySearchFilePath)
+				.onChange(async (value) => {
+					this.plugin.settings.fuzzySearchFilePath = value;
+					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName('Tags Match')
+			.setDesc('Match the Tags found in notes.')
+			.addToggle((toggle) => toggle
+				.setValue(this.plugin.settings.fuzzySearchTags)
+				.onChange(async (value) => {
+					this.plugin.settings.fuzzySearchTags = value;
+					await this.plugin.saveSettings();
+				}));
+
+	}
+}

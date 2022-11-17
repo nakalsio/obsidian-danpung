@@ -5,9 +5,9 @@ import { SearchView } from "./component/SearchView";
 import { createRoot } from "react-dom/client";
 import DanpungPlugin from "./main";
 
-const VIEW_TYPE_EXTERNAL_LINK_VIEWER = "external-link-viewer";
+export const VIEW_TYPE_EXTERNAL_LINK_VIEWER = "external-link-viewer";
 
-class ExternalLinkViewer extends ItemView {
+export class ExternalLinkViewer extends ItemView {
 	constructor(leaf: WorkspaceLeaf, public plugin: DanpungPlugin) {
 		super(leaf);
 	}
@@ -24,7 +24,7 @@ class ExternalLinkViewer extends ItemView {
 		const root = createRoot(this.containerEl.children[1]);
 		root.render(
 			<React.StrictMode>
-				<SearchView data={this.plugin.linkIndexer.linkStore} />
+				<SearchView plugin={this.plugin} />
 			</React.StrictMode>
 		);
 	}
@@ -32,9 +32,4 @@ class ExternalLinkViewer extends ItemView {
 	async onClose() {
 		ReactDOM.unmountComponentAtNode(this.containerEl);
 	}
-}
-
-export {
-	VIEW_TYPE_EXTERNAL_LINK_VIEWER,
-	ExternalLinkViewer
 }

@@ -16,10 +16,11 @@ const compareFn = (a: Fuse.FuseResult<Link>, b: Fuse.FuseResult<Link>) => {
 
 const options = {
 	includeScore: true,
-	keys: ['Text', 'FilePath', 'Path', 'Tags']
+	keys: ['Text']
 }
 
-const search = (data: Link[], query: string) => {
+const search = (data: Link[], query: string, keys: string[]) => {
+	options.keys = keys;
 	const fuse = new Fuse(data, options);
 	const fuseResults = fuse.search(query);
 	return fuseResults.sort(compareFn).map((result) => result.item);

@@ -4,12 +4,14 @@ import { DebounceInput } from 'react-debounce-input';
 import { Link } from "../extlnklib";
 import { search } from '../fuzzy';
 import { v4 as uuidv4 } from 'uuid';
+import DanpungPlugin from "../main";
+import { getFuzzySearchKeys } from '../settings';
 
 type SearchViewProps = {
-	data: Link[];
+	plugin: DanpungPlugin
 }
 
-export const SearchView = ({ data }: SearchViewProps) => {
+export const SearchView = ({ plugin }: SearchViewProps) => {
 
 	const [searchQuery, setSearchQuery] = React.useState('');
 
@@ -17,22 +19,24 @@ export const SearchView = ({ data }: SearchViewProps) => {
 
 	const handleQuery = (evt: React.ChangeEvent<HTMLInputElement>) => {
 		const query = evt.target.value;
-		setResult(search(data, query));
+		setResult(search(plugin.linkIndexer.linkStore, query, getFuzzySearchKeys(plugin.settings)));
 	}
 
 	const handleFilePath = (evt: React.MouseEvent<HTMLElement>) => {
-		console.log(evt.currentTarget.innerText);
+		const filePath = evt.currentTarget.innerText;
+		console.log(filePath);
+		plugin.app.workspace.openLinkText(filePath, '', false);
 	}
 
 	const handleTag = (evt: React.MouseEvent<HTMLElement>) => {
 		const query = evt.currentTarget.innerText;
 		setSearchQuery(query);
-		setResult(search(data, query));
+		setResult(search(plugin.linkIndexer.linkStore, query, getFuzzySearchKeys(plugin.settings, ['Tags'])));
 	}
 
 	return (
 		<div>
-			<div>Search your external links</div>
+			{/* <div>Search your external links</div> */}
 			<div>
 				<DebounceInput
 					className="ext_link_viewer_search"
@@ -40,7 +44,8 @@ export const SearchView = ({ data }: SearchViewProps) => {
 					debounceTimeout={300}
 					onChange={handleQuery}
 					value={searchQuery}
-				 />
+					placeholder="Search your external links"
+				/>
 			</div>
 			<div>
 				<small className="ext_link_viewer_result_comment">{result.length} found</small>
