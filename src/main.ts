@@ -1,6 +1,6 @@
 import { Plugin } from 'obsidian';
 import { ExternalLinkViewer, VIEW_TYPE_EXTERNAL_LINK_VIEWER } from './view';
-import { LinkIndexer, LinkType, getLinks } from './extlnklib';
+import { LinkIndexer, LinkType, scanHtmlLinks, scanMarkdownLinks, scanOrphanedLinks } from './extlnklib';
 import { DanpungPluginSettingTab, DanpungPluginSettings, DEFAULT_SETTINGS } from './settings';
 
 import { LinkSuggestionModal } from './suggestion';
@@ -29,7 +29,7 @@ export default class DanpungPlugin extends Plugin {
 		);
 
 		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('leaf', 'Open Danpung Dashboard', (evt: MouseEvent) => {
+		const ribbonIconEl = this.addRibbonIcon('leaf', 'Search External Links', (evt: MouseEvent) => {
 			// Called when the user clicks the icon.
 			this.activateView();
 		});
@@ -83,7 +83,11 @@ export default class DanpungPlugin extends Plugin {
 				if (!this.settings.onlyFullLink) {
 					mode = LinkType.FQLRelative;
 				}
-				this.linkIndexer.updateStore(file.path, getLinks(content, file.path, mode));
+				const scanedLinks = scanMarkdownLinks(content, file.path, mode);
+				scanedLinks.push(...scanHtmlLinks(content, file.path, mode));
+				scanedLinks.push(...scanOrphanedLinks(content, file.path));
+
+				this.linkIndexer.updateStore(file.path, scanedLinks);
 
 				const tags = (this.app.metadataCache.getCache(file.path)?.tags ?? []).filter((tag) => tag.tag).map((tag) => tag.tag);
 				const fmTags = this.app.metadataCache.getCache(file.path)?.frontmatter?.tags ?? [];

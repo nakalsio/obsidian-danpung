@@ -13,11 +13,11 @@
 	"author": "Jhonghee Park",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/uuid": "^8.3.4",
 		"@types/jest": "^29.2.2",
 		"@types/node": "^16.11.6",
 		"@types/react": "^18.0.25",
 		"@types/react-dom": "^18.0.8",
+		"@types/uuid": "^8.3.4",
 		"@typescript-eslint/eslint-plugin": "5.29.0",
 		"@typescript-eslint/parser": "5.29.0",
 		"builtin-modules": "3.3.0",
@@ -30,6 +30,7 @@
 	},
 	"dependencies": {
 		"fuse.js": "^6.6.2",
+		"node-html-parser": "^6.1.4",
 		"react": "^18.2.0",
 		"react-debounce-input": "^3.3.0",
 		"react-dom": "^18.2.0",

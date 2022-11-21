@@ -1,8 +1,9 @@
 import { Plugin, TFile } from "obsidian";
 import DanpungPlugin from "./main";
+import { parse } from 'node-html-parser';
 
 export {
-	LinkIndexer, Link, LinkType, getLinks
+	LinkIndexer, Link, LinkType, scanMarkdownLinks, scanHtmlLinks, scanOrphanedLinks
 }
 
 enum LinkType {
@@ -32,7 +33,11 @@ class LinkIndexer {
 					if (!plugin.settings.onlyFullLink) {
 						mode = LinkType.FQLRelative;
 					}
-					this.updateStore(file.path, getLinks(content, file.path, mode));
+					const scanedLinks = scanMarkdownLinks(content, file.path, mode);
+					scanedLinks.push(...scanHtmlLinks(content, file.path, mode));
+					scanedLinks.push(...scanOrphanedLinks(content, file.path));
+
+					this.updateStore(file.path, scanedLinks);
 				})
 			})
 		)
@@ -43,7 +48,11 @@ class LinkIndexer {
 					if (!plugin.settings.onlyFullLink) {
 						mode = LinkType.FQLRelative;
 					}
-					this.updateStore(oldPath, getLinks(content, file.path, mode));
+					const scanedLinks = scanMarkdownLinks(content, file.path, mode);
+					scanedLinks.push(...scanHtmlLinks(content, file.path, mode));
+					scanedLinks.push(...scanOrphanedLinks(content, file.path));
+
+					this.updateStore(oldPath, scanedLinks);
 				})
 			})
 		)
@@ -85,13 +94,13 @@ class LinkIndexer {
 	}
 }
 
+const regexMdLinks =  /\[([^\[]+)\](\(.*\))/gm
+
 const fullLinkOnlyRegex = /^\[([\w\s\d]+)\]\((https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))\)$/
 
 const fullAndRelative = /\[([^\[]+)\]\((.*)\)/
 
-const regexMdLinks = /\[([^\[]+)\](\(.*\))/gm
-
-const getLinks = (content: string, filepath: string, mode: LinkType = LinkType.FQL): Link[] => {
+const scanMarkdownLinks = (content: string, filepath: string, mode: LinkType = LinkType.FQL): Link[] => {
 
 	const links: Link[] = [];
 
@@ -111,3 +120,47 @@ const getLinks = (content: string, filepath: string, mode: LinkType = LinkType.F
 
 	return links;
 }
+
+const fullHtmlLinkRegex = /<a href=["'](https?:\/\/.*)["']>(.*)<\/a>/gm
+
+const htmlLinkRegex = /<a href=["'](.*)["']>(.*)<\/a>/gm
+
+const scanHtmlLinks = (content: string, filepath: string, mode: LinkType = LinkType.FQL): Link[] => {
+	const links: Link[] = [];
+
+	let pattern = fullHtmlLinkRegex;
+	if (mode != LinkType.FQL) {
+		pattern = htmlLinkRegex;
+	}
+
+	const htmlLinks = content.matchAll(pattern);
+
+	for (const htmlLink of htmlLinks) {
+		links.push(new Link(htmlLink[2], htmlLink[1], filepath));
+	}
+
+	return links;
+}
+
+const fullOrphanedLinkRegex = /(?<![\("'<])(https?:\/\/[^\s\)]+)(?![\)"'>])/gm
+
+const fullAngleBracketOrphanedLinkRegex = /(?<![\("'])<(https?:\/\/[^\s\)]+)>(?![\)"'])/gm
+
+const scanOrphanedLinks = (content: string, filepath: string): Link[] => {
+	const links: Link[] = [];
+
+	let orphanedLinks = content.matchAll(fullOrphanedLinkRegex);
+
+	for (const orphanedLink of orphanedLinks) {
+		links.push(new Link(orphanedLink[1], orphanedLink[1], filepath));
+	}
+
+	orphanedLinks = content.matchAll(fullAngleBracketOrphanedLinkRegex);
+
+	for (const orphanedLink of orphanedLinks) {
+		links.push(new Link(orphanedLink[1], orphanedLink[1], filepath));
+	}
+
+	return links;
+}
+
