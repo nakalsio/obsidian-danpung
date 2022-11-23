@@ -6,7 +6,7 @@ This plugin lets you search external links found in your notes. The search featu
 
 If you had a large number of external links used in your notes over some period of time, it is not easy to find them when you need to re-use them in your new notes. This plugin allows you to search the external links from the suggestion modal dialog and insert the selected link into your editor.
 
-[Play the demo](https://github.com/nakalsio/obsidian-danpung#1-inserting-an-external-link-previously-used-in-the-notes)
+[Play the demo](https://github.com/nakalsio/obsidian-danpung#1-inserting-an-external-link-previously-used-in-the-notes?replay=9zptC01CuJPS)
 
 ![Insert external link demo](images/insert_ext_link.gif)
 
@@ -14,7 +14,7 @@ If you had a large number of external links used in your notes over some period 
 
 When you work on a note and need to open a website, you can open a search view, fuzzy-search the link and click to open it.
 
-[Play the demo](https://github.com/nakalsio/obsidian-danpung#2-find-my-favorite-links-using-fuzzy-search)
+[Play the demo](https://github.com/nakalsio/obsidian-danpung#2-find-my-favorite-links-using-fuzzy-search?replay=i37RFEEwX9QY)
 
 ![Search and opne a link demo](images/search_and_open.gif)
 
