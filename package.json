@@ -1,5 +1,5 @@
 {
-	"name": "obsidian-danpung-plugin",
+	"name": "obsidian-extlnkhelper-plugin",
 	"version": "1.0.0",
 	"description": "This is a plugin for making entering links easier.",
 	"main": "main.js",
