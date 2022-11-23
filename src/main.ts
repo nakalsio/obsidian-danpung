@@ -84,8 +84,12 @@ export default class DanpungPlugin extends Plugin {
 					mode = LinkType.FQLRelative;
 				}
 				const scanedLinks = scanMarkdownLinks(content, file.path, mode);
-				scanedLinks.push(...scanHtmlLinks(content, file.path, mode));
-				scanedLinks.push(...scanOrphanedLinks(content, file.path));
+				if (this.settings.htmlAnchorLinks) {
+					scanedLinks.push(...scanHtmlLinks(content, file.path, mode));
+				}
+				if (this.settings.urlLinks) {
+					scanedLinks.push(...scanOrphanedLinks(content, file.path));
+				}
 
 				this.linkIndexer.updateStore(file.path, scanedLinks);
 

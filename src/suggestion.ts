@@ -31,7 +31,12 @@ export class LinkSuggestionModal extends SuggestModal<Link> {
 	onChooseSuggestion(item: Link, evt: MouseEvent | KeyboardEvent) {
 		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
 		if (view) {
-			view.editor.replaceSelection(`[${item.Text}](${item.Path})`);
+			const selectedText = view.editor.getSelection();
+			if (selectedText && this.plugin.settings.useSelectedText) {
+				view.editor.replaceSelection(`[${selectedText}](${item.Path})`);
+			} else {
+				view.editor.replaceSelection(`[${item.Text}](${item.Path})`);
+			}
 		}
 	}
 	constructor(public plugin: DanpungPlugin) {

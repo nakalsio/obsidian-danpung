@@ -4,6 +4,9 @@ import { Link } from "./extlnklib";
 
 export interface DanpungPluginSettings {
 	onlyFullLink: boolean;
+	useSelectedText: boolean;
+	htmlAnchorLinks: boolean;
+	urlLinks: boolean;
 	fuzzySearchTitle: boolean;
 	fuzzySearchFilePath: boolean;
 	fuzzySearchPath: boolean;
@@ -13,6 +16,9 @@ export interface DanpungPluginSettings {
 
 export const DEFAULT_SETTINGS: DanpungPluginSettings = {
 	onlyFullLink: true,
+	useSelectedText: true,
+	htmlAnchorLinks: true,
+	urlLinks: true,
 	fuzzySearchTitle: true,
 	fuzzySearchFilePath: false,
 	fuzzySearchPath: false,
@@ -54,7 +60,7 @@ export class DanpungPluginSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl('h2', { text: 'Settings for indexing links.' });
+		containerEl.createEl('h2', { text: 'Setting for indexing markdown links.' });
 
 		new Setting(containerEl)
 			.setName('Only Full Links')
@@ -63,6 +69,38 @@ export class DanpungPluginSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.onlyFullLink)
 				.onChange(async (value) => {
 					this.plugin.settings.onlyFullLink = value;
+					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName('HTML anchor links')
+			.setDesc('HTML anchor links (e.g. <a href="...">...</a>) will be collected.')
+			.addToggle((toggle) => toggle
+				.setValue(this.plugin.settings.htmlAnchorLinks)
+				.onChange(async (value) => {
+					this.plugin.settings.htmlAnchorLinks = value;
+					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName('URL links')
+			.setDesc('URL links (e.g. https://obsidian.md/) with fully qualified URL will be collected.')
+			.addToggle((toggle) => toggle
+				.setValue(this.plugin.settings.htmlAnchorLinks)
+				.onChange(async (value) => {
+					this.plugin.settings.htmlAnchorLinks = value;
+					await this.plugin.saveSettings();
+				}));
+
+		containerEl.createEl('h2', { text: 'Setting for markdown link insertion' });
+
+		new Setting(containerEl)
+			.setName('Use selected text as link text')
+			.setDesc('If selected text is not empty, it will be used as link text.')
+			.addToggle((toggle) => toggle
+				.setValue(this.plugin.settings.useSelectedText)
+				.onChange(async (value) => {
+					this.plugin.settings.useSelectedText = value;
 					await this.plugin.saveSettings();
 				}));
 

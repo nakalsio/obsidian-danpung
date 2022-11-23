@@ -34,8 +34,12 @@ class LinkIndexer {
 						mode = LinkType.FQLRelative;
 					}
 					const scanedLinks = scanMarkdownLinks(content, file.path, mode);
-					scanedLinks.push(...scanHtmlLinks(content, file.path, mode));
-					scanedLinks.push(...scanOrphanedLinks(content, file.path));
+					if (plugin.settings.htmlAnchorLinks) {
+						scanedLinks.push(...scanHtmlLinks(content, file.path, mode));
+					}
+					if (plugin.settings.urlLinks) {
+						scanedLinks.push(...scanOrphanedLinks(content, file.path));
+					}
 
 					this.updateStore(file.path, scanedLinks);
 				})
@@ -49,8 +53,12 @@ class LinkIndexer {
 						mode = LinkType.FQLRelative;
 					}
 					const scanedLinks = scanMarkdownLinks(content, file.path, mode);
-					scanedLinks.push(...scanHtmlLinks(content, file.path, mode));
-					scanedLinks.push(...scanOrphanedLinks(content, file.path));
+					if (plugin.settings.htmlAnchorLinks) {
+						scanedLinks.push(...scanHtmlLinks(content, file.path, mode));
+					}
+					if (plugin.settings.urlLinks) {
+						scanedLinks.push(...scanOrphanedLinks(content, file.path));
+					}
 
 					this.updateStore(oldPath, scanedLinks);
 				})
