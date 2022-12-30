@@ -33,8 +33,6 @@ export default class DanpungPlugin extends Plugin {
 			// Called when the user clicks the icon.
 			this.activateView();
 		});
-		// Perform additional things with the ribbon
-		ribbonIconEl.addClass('my-plugin-ribbon-class');
 
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
 		this.statusBarItemEl = this.addStatusBarItem();
@@ -44,7 +42,6 @@ export default class DanpungPlugin extends Plugin {
 		this.addCommand({
 			id: 'open-ext-link-suggestion-modal',
 			name: 'Open external link suggestions',
-			hotkeys: [{ modifiers: ["Shift", "Alt"], key: ";" }],
 			callback: () => {
 				new LinkSuggestionModal(this).open();
 			}
@@ -52,7 +49,6 @@ export default class DanpungPlugin extends Plugin {
 		this.addCommand({
 			id: 'open-ext-link-viewer',
 			name: 'Open external link viewer',
-			hotkeys: [{ modifiers: ["Shift", "Alt"], key: "'" }],
 			callback: () => {
 				this.activateView();
 			}
@@ -93,8 +89,9 @@ export default class DanpungPlugin extends Plugin {
 
 				this.linkIndexer.updateStore(file.path, scanedLinks);
 
-				const tags = (this.app.metadataCache.getCache(file.path)?.tags ?? []).filter((tag) => tag.tag).map((tag) => tag.tag);
-				const fmTags = this.app.metadataCache.getCache(file.path)?.frontmatter?.tags ?? [];
+				const theCache = this.app.metadataCache.getFileCache(file);
+				const tags = (theCache?.tags ?? []).filter((tag) => tag.tag).map((tag) => tag.tag);
+				const fmTags = theCache?.frontmatter?.tags ?? [];
 				tags.push(...fmTags);
 
 				if (tags) {
