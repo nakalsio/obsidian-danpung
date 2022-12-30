@@ -8,14 +8,21 @@ If you had a large number of external links used in your notes over some period 
 
 > Refresh the page to replay
 
-![Insert external link demo](images/insert_ext_link.gif)
+<video controls>
+  <source src="videos/insert_link_demo.mp4" type="video/mp4">
+  Insert external link demo.
+</video>
+
 ## 2. Find my favorite links using fuzzy search.
 
 When you work on a note and need to open a website, you can open a search view, fuzzy-search the link and click to open it. You can open this external link viewer by click on the leaf ribbon icon, or choose it from the command palette, `External Link Helper: Open external link viewer`.
 
 > Refresh the page to replay
 
-![Search and opne a link demo](images/search_and_open.gif)
+<video controls>
+  <source src="videos/search_open_link_demo.mp4" type="video/mp4">
+  Search and open a link demo.
+</video>
 
 A few more things that you can do in the external link viewer.
 
